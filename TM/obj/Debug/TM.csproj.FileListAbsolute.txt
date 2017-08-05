@@ -11,3 +11,7 @@ C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.Properties.Resources.resources
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.csproj.GenerateResource.Cache
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.exe
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.pdb
+C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Setting.g.cs
+C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Setting.baml
+C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.csprojResolveAssemblyReference.cache

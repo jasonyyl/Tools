@@ -25,6 +25,18 @@ namespace TM
             InitializeComponent();
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            List<CCustomTreeItem> trees = new List<CCustomTreeItem>();
+            CCustomTreeItem i = new CCustomTreeItem() { Icon = CCommon.StrFolderIconPath, DisplayName = "文件夹" };
+            i.Children.Add(new CCustomTreeItem() { Icon = CCommon.StrExcelIconPath, DisplayName = "123" });
+            i.Children.Add(new CCustomTreeItem() { Icon = CCommon.StrExcelIconPath, DisplayName = "123" });
+            i.Children.Add(new CCustomTreeItem() { Icon = CCommon.StrExcelIconPath, DisplayName = "123" });
+            i.Children.Add(new CCustomTreeItem() { Icon = CCommon.StrExcelIconPath, DisplayName = "123" });
+            trees.Add(i);
+            tw_item.ItemsSource = trees;
+        }
+
         private void MenuItem_ExportTable_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Table");
@@ -40,6 +52,12 @@ namespace TM
         private void Command_ExportTableBinary(object sender, ExecutedRoutedEventArgs e)
         {
             MessageBox.Show("TableBinary");
+        }
+
+        private void MenuItem_Base_Setting(object sender, RoutedEventArgs e)
+        {
+            Setting s = new Setting();
+            s.ShowDialog();     
         }
     }
 }

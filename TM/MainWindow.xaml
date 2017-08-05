@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TM"
         xmlns:tm="clr-namespace:TM"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="600" Width="1000" Loaded="Window_Loaded">
     <Window.CommandBindings>
         <CommandBinding Command="tm:CCustomCommand.ExportTable" Executed="Command_ExportTable"/>
         <CommandBinding Command="tm:CCustomCommand.ExportTableBinary" Executed="Command_ExportTableBinary"/>
@@ -17,26 +17,35 @@
     </Window.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="142*"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="377*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="98*"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="21*"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <Menu x:Name="menu" Grid.Row="0" Grid.ColumnSpan="2" Height="24" VerticalAlignment="Top" Margin="0,0,-0.333,0" >
+        <Menu x:Name="menu" Grid.Row="0" Grid.ColumnSpan="2" Height="24" VerticalAlignment="Top" Margin="0,0,-0.667,0" Grid.RowSpan="2" >
             <MenuItem Header="设置">
-                <MenuItem Header="基本设置"/>
+                <MenuItem Header="基本设置" Click="MenuItem_Base_Setting"/>
             </MenuItem>
             <MenuItem Header="操作">
                 <MenuItem Header="导出表格" InputGestureText="Ctrl+T" Click="MenuItem_ExportTable_Click"/>
                 <MenuItem Header="导出表格（二进制）" InputGestureText="Ctrl+B" Click="MenuItem_ExportTableBinary_Click"/>
             </MenuItem>
         </Menu>
-        <TreeView x:Name="treeView"  HorizontalAlignment="Left" Height="100" Margin="0,2.333,0,0" Grid.Row="1" VerticalAlignment="Top" Width="100">
-            <TreeViewItem Header="表格"></TreeViewItem>
-            <TreeViewItem Header="表格1"></TreeViewItem>
-            <TreeViewItem Header="表格2"></TreeViewItem>
+        <TreeView x:Name="tw_item"  Grid.Row="1" VerticalAlignment="Top" Height="600" >
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate  DataType="{x:Type tm:CCustomTreeItem}" ItemsSource="{Binding Path=Children}">
+                    <StackPanel VerticalAlignment="Top">
+                        <StackPanel Orientation="Horizontal">
+                            <Image VerticalAlignment="Center" Source="{Binding Icon}" Width="30" Height="30"></Image>
+                            <TextBlock VerticalAlignment="Center" Width="50" Text="{Binding DisplayName}"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
         </TreeView>
 
     </Grid>

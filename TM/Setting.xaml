@@ -1,0 +1,29 @@
+﻿<Window x:Class="TM.Setting"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TM"
+        mc:Ignorable="d"
+        Title="基本设置" Height="300" Width="600" Loaded="Window_Loaded">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="0,30,0,10">
+                <TextBlock x:Name="tb_table_title" Width="120" Height="20" Text="表格路径" TextAlignment="Center" />
+                <TextBox x:Name="tb_table_path" Height="20" Width="300"/>
+                <Button x:Name="bt_table_setting" Content="设置" Width="75" Click="bt_table_setting_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock x:Name="tb_table_exopt_title" Width="120" Height="20" Text="表格输出" TextAlignment="Center" />
+                <TextBox x:Name="tb_table_exopt_path" Height="20" Width="300"/>
+                <Button x:Name="bt_table_exopt_setting" Content="设置" Width="75" Click="bt_table_exopt_setting_Click"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock x:Name="tb_table_exopt_binary_title" Width="120" Height="20" Text="表格输出（二进制）" TextAlignment="Center" />
+                <TextBox x:Name="tb_table_exopt_binary_path" Height="20" Width="300"/>
+                <Button x:Name="bt_table_exopt_binary_setting" Content="设置" Width="75" Click="bt_table_exopt_binary_setting_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
