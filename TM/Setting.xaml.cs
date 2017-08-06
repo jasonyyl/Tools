@@ -26,15 +26,26 @@ namespace TM
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string tablePath = ConfigurationManager.AppSettings["table"];
-            string tableExportPath = ConfigurationManager.AppSettings["tableExportPath"];
-            string tableExportBinaryPath = ConfigurationManager.AppSettings["tableExportBinaryPath"];
-            tb_table_path.Text = tablePath;
-            tb_table_exopt_path.Text = tableExportPath;
-            tb_table_exopt_binary_path.Text = tableExportBinaryPath;
+            tb_code_path.Text = CCommon.GetValue(CCommon.key_code);
+            tb_table_path.Text = CCommon.GetValue(CCommon.key_table);
+            tb_table_exopt_path.Text = CCommon.GetValue(CCommon.key_tableEP);
+            tb_table_exopt_binary_path.Text = CCommon.GetValue(CCommon.key_tableEBP);
+            cb_excel.IsChecked = CCommon.GetValue(CCommon.key_fileExcel) == "1";
+            cb_txt.IsChecked = CCommon.GetValue(CCommon.key_fileTxt) == "1";
+            cb_code.IsChecked = CCommon.GetValue(CCommon.key_fileCode) == "1";
 
         }
-
+        private void bt_code_setting_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                string path = folderBrowserDialog.SelectedPath;
+                tb_code_path.Text = path;
+                CCommon.SetValue(CCommon.key_code, path);
+            }
+        }
         private void bt_table_exopt_binary_setting_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -43,10 +54,7 @@ namespace TM
             {
                 string path = folderBrowserDialog.SelectedPath;
                 tb_table_exopt_binary_path.Text = path;
-                Configuration cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                cfa.AppSettings.Settings["tableExportBinaryPath"].Value = path;
-                cfa.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection("appSettings");
+                CCommon.SetValue(CCommon.key_tableEBP, path);
             }
         }
 
@@ -58,10 +66,7 @@ namespace TM
             {
                 string path = folderBrowserDialog.SelectedPath;
                 tb_table_exopt_path.Text = path;
-                Configuration cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                cfa.AppSettings.Settings["tableExportPath"].Value = path;
-                cfa.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection("appSettings");
+                CCommon.SetValue(CCommon.key_tableEP, path);
             }
         }
 
@@ -73,10 +78,34 @@ namespace TM
             {
                 string path = folderBrowserDialog.SelectedPath;
                 tb_table_path.Text = path;
-                Configuration cfa = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                cfa.AppSettings.Settings["table"].Value = path;
-                cfa.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection("appSettings");
+                CCommon.SetValue(CCommon.key_table, path);
+
+            }
+        }
+
+        private void cb_fileType_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox c = sender as CheckBox;
+            switch (c.Name)
+            {
+                case "cb_excel": CCommon.SetValue(CCommon.key_fileExcel, "1"); break;
+                case "cb_txt": CCommon.SetValue(CCommon.key_fileTxt, "1"); break;
+                case "cb_code": CCommon.SetValue(CCommon.key_fileCode, "1"); break;
+                default:
+                    break;
+            }
+        }
+
+        private void cb_fileType_UnChecked(object sender, RoutedEventArgs e)
+        {
+            CheckBox c = sender as CheckBox;
+            switch (c.Name)
+            {
+                case "cb_excel": CCommon.SetValue(CCommon.key_fileExcel, "0"); break;
+                case "cb_txt": CCommon.SetValue(CCommon.key_fileTxt, "0"); break;
+                case "cb_code": CCommon.SetValue(CCommon.key_fileCode, "0"); break;
+                default:
+                    break;
             }
         }
     }

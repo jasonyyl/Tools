@@ -9,20 +9,30 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal" Margin="0,30,0,10">
-                <TextBlock x:Name="tb_table_title" Width="120" Height="20" Text="表格路径" TextAlignment="Center" />
+                <TextBlock x:Name="tb_code_title"  Width="120" Height="20" Text="代码生成" TextAlignment="Right" Padding="0,0,8,0" />
+                <TextBox x:Name="tb_code_path" Height="20" Width="300"/>
+                <Button x:Name="bt_code_setting" Content="设置" Width="75" Click="bt_code_setting_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock x:Name="tb_table_title" Width="120" Height="20" Text="表格路径" TextAlignment="Right" Padding="0,0,8,0" />
                 <TextBox x:Name="tb_table_path" Height="20" Width="300"/>
                 <Button x:Name="bt_table_setting" Content="设置" Width="75" Click="bt_table_setting_Click"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,10">
-                <TextBlock x:Name="tb_table_exopt_title" Width="120" Height="20" Text="表格输出" TextAlignment="Center" />
+                <TextBlock x:Name="tb_table_exopt_title" Width="120" Height="20" Text="表格输出" TextAlignment="Right" Padding="0,0,8,0"/>
                 <TextBox x:Name="tb_table_exopt_path" Height="20" Width="300"/>
                 <Button x:Name="bt_table_exopt_setting" Content="设置" Width="75" Click="bt_table_exopt_setting_Click"/>
             </StackPanel>
-
             <StackPanel Orientation="Horizontal" Margin="0,10">
-                <TextBlock x:Name="tb_table_exopt_binary_title" Width="120" Height="20" Text="表格输出（二进制）" TextAlignment="Center" />
+                <TextBlock x:Name="tb_table_exopt_binary_title" Width="120" Height="20" Text="表格输出（二进制）" TextAlignment="Right" Padding="0,0,8,0" />
                 <TextBox x:Name="tb_table_exopt_binary_path" Height="20" Width="300"/>
                 <Button x:Name="bt_table_exopt_binary_setting" Content="设置" Width="75" Click="bt_table_exopt_binary_setting_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock x:Name="lb_file_type" Width="120" Height="20" Text="文件类型" TextAlignment="Right" Padding="0,0,8,0" />
+                <CheckBox x:Name="cb_excel" Content="Excel文件" Checked="cb_fileType_Checked"/>
+                <CheckBox x:Name="cb_txt" Margin="50,0,0,0" Content="文本文件"   Checked="cb_fileType_Checked" Unchecked="cb_fileType_UnChecked"/>
+                <CheckBox x:Name="cb_code"  Margin="50,0,0,0" Content="C#文件" Checked="cb_fileType_Checked" Unchecked="cb_fileType_UnChecked"/>
             </StackPanel>
         </StackPanel>
     </Grid>

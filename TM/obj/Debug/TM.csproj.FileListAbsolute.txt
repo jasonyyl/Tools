@@ -14,4 +14,3 @@ C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.pdb
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Setting.g.cs
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Setting.baml
-C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.csprojResolveAssemblyReference.cache

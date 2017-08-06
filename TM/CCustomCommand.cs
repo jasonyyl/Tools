@@ -11,5 +11,7 @@ namespace TM
     {
         public static RoutedCommand ExportTable = new RoutedCommand();
         public static RoutedCommand ExportTableBinary = new RoutedCommand();
+        public static RoutedCommand GenerateCode = new RoutedCommand();
+
     }
 }

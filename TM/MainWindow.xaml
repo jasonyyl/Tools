@@ -6,47 +6,54 @@
         xmlns:local="clr-namespace:TM"
         xmlns:tm="clr-namespace:TM"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1000" Loaded="Window_Loaded">
+        Title="TM" Height="1000" Width="1400" Loaded="Window_Loaded"  WindowState="Normal" Icon="Images/Icons/icon.png">
     <Window.CommandBindings>
         <CommandBinding Command="tm:CCustomCommand.ExportTable" Executed="Command_ExportTable"/>
         <CommandBinding Command="tm:CCustomCommand.ExportTableBinary" Executed="Command_ExportTableBinary"/>
+        <CommandBinding Command="tm:CCustomCommand.GenerateCode" Executed="Command_GenerateCode"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="T" Modifiers="Control" Command="tm:CCustomCommand.ExportTable"/>
         <KeyBinding Key="B" Modifiers="Control" Command="tm:CCustomCommand.ExportTableBinary"/>
+        <KeyBinding Key="G" Modifiers="Control" Command="tm:CCustomCommand.GenerateCode"/>
     </Window.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="377*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="21*"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="813*"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="92*"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-        <Menu x:Name="menu" Grid.Row="0" Grid.ColumnSpan="2" Height="24" VerticalAlignment="Top" Margin="0,0,-0.667,0" Grid.RowSpan="2" >
+        <Menu x:Name="menu" Grid.Row="0" Grid.ColumnSpan="2" Height="24" VerticalAlignment="Top" Margin="0,0,-0.667,0" >
             <MenuItem Header="设置">
                 <MenuItem Header="基本设置" Click="MenuItem_Base_Setting"/>
             </MenuItem>
             <MenuItem Header="操作">
+                <MenuItem Header="代码生成" InputGestureText="Ctrl+G" Click="MenuItem_CodeGenerate_Click"/>
                 <MenuItem Header="导出表格" InputGestureText="Ctrl+T" Click="MenuItem_ExportTable_Click"/>
                 <MenuItem Header="导出表格（二进制）" InputGestureText="Ctrl+B" Click="MenuItem_ExportTableBinary_Click"/>
             </MenuItem>
         </Menu>
-        <TreeView x:Name="tw_item"  Grid.Row="1" VerticalAlignment="Top" Height="600" >
+        <TreeView x:Name="tw_item"  VerticalAlignment="Stretch" Grid.Row="1">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate  DataType="{x:Type tm:CCustomTreeItem}" ItemsSource="{Binding Path=Children}">
                     <StackPanel VerticalAlignment="Top">
-                        <StackPanel Orientation="Horizontal">
-                            <Image VerticalAlignment="Center" Source="{Binding Icon}" Width="30" Height="30"></Image>
-                            <TextBlock VerticalAlignment="Center" Width="50" Text="{Binding DisplayName}"></TextBlock>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <Image VerticalAlignment="Center" Source="{Binding Icon}" Width="20" Height="20"></Image>
+                            <TextBlock VerticalAlignment="Center" Width="200" Text="{Binding DisplayName}"></TextBlock>
                         </StackPanel>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
 
         </TreeView>
-
+        <Label Background="#FFE7E7E7" Grid.Row="2" Grid.ColumnSpan="2" Content="输出窗口" Margin="0,0.333,0.333,0"/>
+        <ScrollViewer x:Name="sv_output" Grid.Row="3" Grid.ColumnSpan="2"/>
+        <Label Background="#FFE7E7E7" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,91.666,0.333,-0.333" Grid.RowSpan="2"/>
     </Grid>
 </Window>
