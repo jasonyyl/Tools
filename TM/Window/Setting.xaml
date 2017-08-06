@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TM"
         mc:Ignorable="d"
-        Title="基本设置" Height="300" Width="600" Loaded="Window_Loaded">
+        Title="基本设置" Height="300" Width="600" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
     <Grid>
         <StackPanel HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal" Margin="0,30,0,10">

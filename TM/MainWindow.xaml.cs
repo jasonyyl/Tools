@@ -13,25 +13,34 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Collections.ObjectModel;
+using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace TM
 {
-    /// <summary>
-    /// MainWindow.xaml 的交互逻辑
-    /// </summary>
     public partial class MainWindow : Window
     {
-        public CResourceManager ResManager;
+        #region Field
+        CResourceManager m_ResManager;
+        CFileManager m_FileManager;
+        TreeViewItem m_CurSelectedResItem;
+        ObservableCollection<CResourceItem> m_ResItems;
+        #endregion
+
         public MainWindow()
         {
             InitializeComponent();
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ResManager = new CResourceManager();
+            m_ResManager = new CResourceManager();
+            m_FileManager = new CFileManager();
+            m_ResItems = new ObservableCollection<CResourceItem>();
             RefreshResource();
         }
 
+        #region base
         private void Command_GenerateCode(object sender, ExecutedRoutedEventArgs e)
         {
             Log("导出代码成功");
@@ -63,6 +72,206 @@ namespace TM
             s.ShowDialog();
             RefreshResource();
         }
+        #endregion
+
+        #region resource_manager
+
+        #region Open
+        private void MenuItem_OpenFileExplore(object sender, RoutedEventArgs e)
+        {
+            if (m_CurSelectedResItem != null)
+            {
+                CResourceItem ri = m_CurSelectedResItem.DataContext as CResourceItem;
+                if (ri != null)
+                {
+                    string dir = System.IO.Path.GetDirectoryName(ri.Path);
+                    Process.Start("explorer.exe ", dir);
+                }
+            }
+
+        }
+        private void ResItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TreeViewItem)
+                if (!((TreeViewItem)sender).IsSelected)
+                    return;
+            TreeViewItem tviSender = sender as TreeViewItem;
+            if (tviSender != null)
+            {
+                CResourceItem ri = tviSender.DataContext as CResourceItem;
+                if (ri != null)
+                {
+                    if (File.Exists(ri.Path))
+                        Process.Start("explorer.exe ", ri.Path);
+                }
+            }
+        }
+        #endregion
+
+        #region Create
+        private void MenuItem_Create_Folder(object sender, RoutedEventArgs e)
+        {
+            if (m_CurSelectedResItem != null)
+            {
+                CResourceItem ri = m_CurSelectedResItem.DataContext as CResourceItem;
+                if (ri != null)
+                {
+                    CreateNew c = new CreateNew();
+                    c.ShowDialog();
+                    if (!string.IsNullOrEmpty(c.InputName))
+                    {
+                        EFileFlag f = m_FileManager.CreateDirectory(ri.Path, c.InputName);
+                        _LogFileFlag(f);
+                        if (f == EFileFlag.Success)
+                            RefreshResource();
+                    }
+
+                }
+            }
+        }
+        private void MenuItem_Create_Excel(object sender, RoutedEventArgs e)
+        {
+        }
+        private void MenuItem_Create_Text(object sender, RoutedEventArgs e)
+        {
+            if (m_CurSelectedResItem != null)
+            {
+                CResourceItem ri = m_CurSelectedResItem.DataContext as CResourceItem;
+                if (ri != null)
+                {
+                    CreateNew c = new CreateNew();
+                    c.ShowDialog();
+                    if (!string.IsNullOrEmpty(c.InputName))
+                    {
+                        EFileFlag f = m_FileManager.CreateFile(ri.Path, c.InputName, EFileType.Text);
+                        _LogFileFlag(f);
+                        if (f == EFileFlag.Success)
+                            RefreshResource();
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Delete
+        private void MenuItem_Delete(object sender, RoutedEventArgs e)
+        {
+            if (m_CurSelectedResItem != null)
+            {
+                CResourceItem ri = m_CurSelectedResItem.DataContext as CResourceItem;
+                if (ri != null)
+                {
+                    EFileFlag f = m_FileManager.Delete(ri.Path);
+                    _LogFileFlag(f);
+                    if (f == EFileFlag.Success)
+                        RefreshResource();
+                }
+            }
+        }
+        #endregion
+
+        #region Refresh
+        private void MenuItem_Refresh(object sender, RoutedEventArgs e)
+        {
+            RefreshResource();
+        }
+        public void RefreshResource()
+        {
+            string v = CCommon.GetValue(CCommon.key_table);
+            if (Directory.Exists(v))
+            {
+                #region 1.file ext
+                List<string> p = new List<string>();
+                bool isExcel = CCommon.GetValue(CCommon.key_fileExcel) == "1";
+                bool isTxt = CCommon.GetValue(CCommon.key_fileTxt) == "1";
+                bool isCode = CCommon.GetValue(CCommon.key_fileCode) == "1";
+                if (isExcel)
+                    p.Add(".xlsm");
+                if (isTxt)
+                    p.Add(".txt");
+                if (isCode)
+                    p.Add(".cs");
+                #endregion
+
+                #region 2. filter is change the root path
+                if (m_ResItems.Count > 0)
+                {
+                    if (m_ResItems.First().Path != v)
+                        m_ResItems.Clear();
+                }
+                CResourceItem resItemRoot;
+                if (m_ResItems.Count > 0)
+                {
+                    resItemRoot = m_ResItems[0];
+                }
+                else
+                {
+                    resItemRoot = new CResourceItem();
+                    string curName = System.IO.Path.GetFileName(v);
+                    resItemRoot.Icon = CCommon.StrFolderIconPath;
+                    resItemRoot.DisplayName = curName;
+                    resItemRoot.Path = v;
+                    m_ResItems.Add(resItemRoot);
+                }
+                m_ResManager.GetResources(v, resItemRoot, p.ToArray());
+                tw_item.ItemsSource = m_ResItems;
+                if (tw_item.ItemContainerGenerator.Items.Count > 0)
+                {
+                    TreeViewItem ti = (TreeViewItem)(tw_item.ItemContainerGenerator.ContainerFromIndex(0));
+                    if (ti != null)
+                        ti.IsExpanded = true;
+                }
+                #endregion
+            }
+        }
+        #endregion
+
+        #region Base
+        private void ResItem_MouseRightButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            var treeViewItem = _VisualUpwardSearch<TreeViewItem>(e.OriginalSource as DependencyObject) as TreeViewItem;
+            if (treeViewItem != null)
+            {
+                m_CurSelectedResItem = treeViewItem;
+                treeViewItem.Focus();
+                e.Handled = true;
+            }
+        }
+        DependencyObject _VisualUpwardSearch<T>(DependencyObject source)
+        {
+            while (source != null && source.GetType() != typeof(T))
+                source = VisualTreeHelper.GetParent(source);
+            return source;
+        }
+
+        private void _LogFileFlag(EFileFlag f)
+        {
+            string str_f = string.Empty;
+            switch (f)
+            {
+                case EFileFlag.File_Exist:
+                    str_f = "文件已存在";
+                    break;
+                case EFileFlag.Path_NotExist:
+                    str_f = "路径不存在";
+                    break;
+                case EFileFlag.Directory_NotExist:
+                    str_f = "文件夹不存在";
+                    break;
+                case EFileFlag.Success:
+                    str_f = "操作成功";
+                    break;
+                default:
+                    break;
+            }
+            Log(str_f);
+        }
+        #endregion
+
+        #endregion
+
+        #region common
         public void Log(string log, bool isClear = false)
         {
             if (isClear)
@@ -80,31 +289,10 @@ namespace TM
             sv_output.ScrollToBottom();
         }
 
-        public void RefreshResource()
-        {
-            string v = CCommon.GetValue(CCommon.key_table);
-            if (Directory.Exists(v))
-            {
-                List<string> p = new List<string>();
-                bool isExcel = CCommon.GetValue(CCommon.key_fileExcel) == "1";
-                bool isTxt = CCommon.GetValue(CCommon.key_fileTxt) == "1";
-                bool isCode = CCommon.GetValue(CCommon.key_fileCode) == "1";
-                if (isExcel)
-                    p.Add(".xlsm");
-                if (isTxt)
-                    p.Add(".txt");
-                if (isCode)
-                    p.Add(".cs");
-                List<CCustomTreeItem> resItems = new List<CCustomTreeItem>();
-                CCustomTreeItem resItem = new CCustomTreeItem();
-                string curName = System.IO.Path.GetFileName(v);
-                resItem.Icon = CCommon.StrFolderIconPath;
-                resItem.DisplayName = curName;
-                ResManager.GetResources(v, resItem, p.ToArray());
-                resItems.Add(resItem);
-                tw_item.ItemsSource = resItems;
-            }
-        }
+
+
+        #endregion
+
 
     }
 }

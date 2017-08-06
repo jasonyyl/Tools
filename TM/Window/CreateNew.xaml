@@ -1,0 +1,16 @@
+﻿<Window x:Class="TM.CreateNew"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TM"
+        mc:Ignorable="d"
+        Title="新建" Height="150" Width="500" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+            <TextBlock Text="名称"/>
+            <TextBox x:Name="tb_input_name" Margin="20,0,0,0" Width="260"></TextBox>
+            <Button x:Name="bt_ensure" Margin="20,0,0,0" Width="50" Content="确定" Click="bt_ensure_Click"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

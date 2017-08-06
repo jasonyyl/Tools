@@ -6,7 +6,19 @@
         xmlns:local="clr-namespace:TM"
         xmlns:tm="clr-namespace:TM"
         mc:Ignorable="d"
-        Title="TM" Height="1000" Width="1400" Loaded="Window_Loaded"  WindowState="Normal" Icon="Images/Icons/icon.png">
+        Title="TM" Height="1000" Width="1400" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" WindowState="Normal" Icon="Images/Icons/icon.png">
+    <Window.Resources>
+        <ContextMenu x:Key="res_manager">
+            <MenuItem Header="新建">
+                <MenuItem Header="文件夹" Click="MenuItem_Create_Folder" />
+                <MenuItem Header="Excel文件" Click="MenuItem_Create_Excel" />
+                <MenuItem Header="文本文件" Click="MenuItem_Create_Text" />
+            </MenuItem>
+            <MenuItem Header="删除" Click="MenuItem_Delete"/>
+            <MenuItem Header="刷新" Click="MenuItem_Refresh" />
+            <MenuItem Header="打开文件管理器" Click="MenuItem_OpenFileExplore" />
+        </ContextMenu>
+    </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="tm:CCustomCommand.ExportTable" Executed="Command_ExportTable"/>
         <CommandBinding Command="tm:CCustomCommand.ExportTableBinary" Executed="Command_ExportTableBinary"/>
@@ -39,18 +51,27 @@
                 <MenuItem Header="导出表格（二进制）" InputGestureText="Ctrl+B" Click="MenuItem_ExportTableBinary_Click"/>
             </MenuItem>
         </Menu>
-        <TreeView x:Name="tw_item"  VerticalAlignment="Stretch" Grid.Row="1">
+
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1">
+            <Label Background="#FFE7E7E7" Grid.Row="1" Height="25" VerticalAlignment="Top" Content="资源管理器" VerticalContentAlignment="Center" Padding="15,0,0,0" Margin="0,-1,0,0"/>
+        </Border>
+        <TreeView x:Name="tw_item" Grid.Row="1" Margin="0,25,0,0"  VerticalAlignment="Stretch" ContextMenu="{StaticResource res_manager}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <EventSetter  Event="PreviewMouseRightButtonDown" Handler="ResItem_MouseRightButtonClick"/>
+                    <EventSetter  Event="MouseDoubleClick" Handler="ResItem_MouseDoubleClick"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate  DataType="{x:Type tm:CCustomTreeItem}" ItemsSource="{Binding Path=Children}">
+                <HierarchicalDataTemplate  DataType="{x:Type tm:CResourceItem}" ItemsSource="{Binding Path=Children}">
                     <StackPanel VerticalAlignment="Top">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                             <Image VerticalAlignment="Center" Source="{Binding Icon}" Width="20" Height="20"></Image>
-                            <TextBlock VerticalAlignment="Center" Width="200" Text="{Binding DisplayName}"></TextBlock>
+                            <TextBlock  Margin="5,0,0,0" VerticalAlignment="Center" Width="200" Text="{Binding DisplayName}"></TextBlock>
                         </StackPanel>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
-
         </TreeView>
         <Label Background="#FFE7E7E7" Grid.Row="2" Grid.ColumnSpan="2" Content="输出窗口" Margin="0,0.333,0.333,0"/>
         <ScrollViewer x:Name="sv_output" Grid.Row="3" Grid.ColumnSpan="2"/>
