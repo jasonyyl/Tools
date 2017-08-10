@@ -22,9 +22,8 @@ namespace TM
     public partial class MainWindow : Window
     {
         #region Field
-        CExcelManager m_ExcelManager;
+        CTableManager m_TableManager;
         CResourceManager m_ResManager;
-        CFileManager m_FileManager;
         TreeViewItem m_CurSelectedResItem;
         ObservableCollection<CResourceItem> m_ResItems;
         #endregion
@@ -36,12 +35,8 @@ namespace TM
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             m_ResManager = new CResourceManager();
-            m_FileManager = new CFileManager();
+            m_TableManager = new CTableManager();
             m_ResItems = new ObservableCollection<CResourceItem>();
-            m_ExcelManager = new CExcelManager();
-            m_ExcelManager.Open(@"E:\Work\Projects\Unity3d\SVN\MgaSrcNS\GameClient\TableOrg\CameraConfig.xlsm");
-            Microsoft.Office.Interop.Excel.Worksheet w = m_ExcelManager.GetSheet(2);
-            Log(w.Name);
             RefreshResource();
         }
 
@@ -65,7 +60,24 @@ namespace TM
         }
         private void MenuItem_ExportTable_Click(object sender, RoutedEventArgs e)
         {
-            Log("导出表格成功");
+            if (m_CurSelectedResItem != null)
+            {
+                CResourceItem ri = m_CurSelectedResItem.DataContext as CResourceItem;
+                if (ri != null)
+                {
+                    if (Directory.Exists(ri.Path))
+                    {
+                        
+                    }
+                    else
+                    {
+                        if (File.Exists(ri.Path))
+                        {
+                            m_TableManager.ExportTable(ri.Path);
+                        }
+                    }                 
+                }
+            }
         }
         private void MenuItem_ExportTableBinary_Click(object sender, RoutedEventArgs e)
         {
@@ -125,7 +137,7 @@ namespace TM
                     c.ShowDialog();
                     if (!string.IsNullOrEmpty(c.InputName))
                     {
-                        EFileFlag f = m_FileManager.CreateDirectory(ri.Path, c.InputName);
+                        EFileFlag f = CFileManager.CreateDirectory(ri.Path, c.InputName);
                         _LogFileFlag(f);
                         if (f == EFileFlag.Success)
                             RefreshResource();
@@ -148,7 +160,7 @@ namespace TM
                     c.ShowDialog();
                     if (!string.IsNullOrEmpty(c.InputName))
                     {
-                        EFileFlag f = m_FileManager.CreateFile(ri.Path, c.InputName, EFileType.Text);
+                        EFileFlag f = CFileManager.CreateFile(ri.Path, c.InputName, EFileType.Text);
                         _LogFileFlag(f);
                         if (f == EFileFlag.Success)
                             RefreshResource();
@@ -167,7 +179,7 @@ namespace TM
                 CResourceItem ri = m_CurSelectedResItem.DataContext as CResourceItem;
                 if (ri != null)
                 {
-                    EFileFlag f = m_FileManager.Delete(ri.Path);
+                    EFileFlag f = CFileManager.Delete(ri.Path);
                     _LogFileFlag(f);
                     if (f == EFileFlag.Success)
                         RefreshResource();
@@ -301,7 +313,7 @@ namespace TM
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            m_ExcelManager.Close();
+            CExcelManager.Instance.Close();
         }
     }
 }

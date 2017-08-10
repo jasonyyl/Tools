@@ -14,8 +14,14 @@
                 <MenuItem Header="Excel文件" Click="MenuItem_Create_Excel" />
                 <MenuItem Header="文本文件" Click="MenuItem_Create_Text" />
             </MenuItem>
-            <MenuItem Header="删除" Click="MenuItem_Delete"/>
+            <MenuItem Header="导出">
+                <MenuItem Header="导出表格" Click="MenuItem_ExportTable_Click"/>
+                <MenuItem Header="导出表格(二进制)" Click="MenuItem_ExportTableBinary_Click"/>
+                <MenuItem Header="导出代码" Click="MenuItem_CodeGenerate_Click"/>
+            </MenuItem>
             <MenuItem Header="刷新" Click="MenuItem_Refresh" />
+            <MenuItem Header="删除" Click="MenuItem_Delete"/>
+
             <MenuItem Header="打开文件管理器" Click="MenuItem_OpenFileExplore" />
         </ContextMenu>
     </Window.Resources>

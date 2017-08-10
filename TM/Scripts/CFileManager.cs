@@ -24,10 +24,9 @@ namespace TM
         Success,
 
     }
-    public class CFileManager
+    public static class CFileManager
     {
-
-        public EFileFlag CreateFile(string dir, string name, EFileType ft)
+        public static EFileFlag CreateFile(string dir, string name, EFileType ft)
         {
             if (Directory.Exists(dir))
             {
@@ -56,7 +55,7 @@ namespace TM
                 return EFileFlag.Directory_NotExist;
             }
         }
-        public EFileFlag CreateDirectory(string dir, string name)
+        public static EFileFlag CreateDirectory(string dir, string name)
         {
             if (Directory.Exists(dir))
             {
@@ -69,7 +68,7 @@ namespace TM
                 return EFileFlag.Directory_NotExist;
             }
         }
-        public EFileFlag Delete(string path)
+        public static EFileFlag Delete(string path)
         {
             bool isExist = false;
             if (Directory.Exists(path))
@@ -91,6 +90,11 @@ namespace TM
                 return EFileFlag.Path_NotExist;
             }
 
+        }
+
+        public static bool Exist(string path)
+        {
+            return File.Exists(path);
         }
     }
 }

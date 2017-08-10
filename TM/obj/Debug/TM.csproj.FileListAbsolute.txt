@@ -37,3 +37,4 @@ C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.g.resources
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.Properties.Resources.resources
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.csproj.GenerateResource.Cache
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM_Content.g.cs
+C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM_Content.g.cs

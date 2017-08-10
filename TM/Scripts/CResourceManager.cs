@@ -67,6 +67,8 @@ namespace TM
                     }
                     if (isNew)
                     {
+                        if (f.Contains("~$"))
+                            continue;
                         CResourceItem resItem = new CResourceItem();
                         string curName = Path.GetFileNameWithoutExtension(f);
                         resItem.Icon = CCommon.StrExcelIconPath;

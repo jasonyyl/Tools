@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace TM
 {
-    public class CExcelManager
+    public class CExcelManager : CSingleton<CExcelManager>
     {
         #region Field
         readonly object m_Nothing = System.Reflection.Missing.Value;
@@ -34,12 +34,12 @@ namespace TM
             }
         }
 
-        public void Open(string path)
+        public bool Open(string path)
         {
-            if (File.Exists(path))
-            {
-                m_WorkBook = m_App.Workbooks.Open(path, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing);
-            }
+            if (!CFileManager.Exist(path))
+                return false;
+            m_WorkBook = m_App.Workbooks.Open(path, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing);
+            return m_WorkBook != null;
         }
         public Worksheet GetSheet(string sheetName)
         {
@@ -64,6 +64,15 @@ namespace TM
             }
             return null;
 
+        }
+
+        public Sheets GetSheets()
+        {
+            if (m_WorkBook != null)
+            {
+                return m_WorkBook.Worksheets;
+            }
+            return null;
         }
         public void Close()
         {

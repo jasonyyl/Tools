@@ -9,7 +9,7 @@ namespace TM
     public class CSingleton<T> where T : new()
     {
         public static T Instance;
-        public CSingleton()
+        static CSingleton()
         {
             if (Instance == null)
             {

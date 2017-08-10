@@ -69,6 +69,8 @@
     </ApplicationDefinition>
     <Compile Include="Scripts\CExcelManager.cs" />
     <Compile Include="Scripts\CFileManager.cs" />
+    <Compile Include="Scripts\Table\CTableManager.cs" />
+    <Compile Include="Scripts\Table\CTableTemplate.cs" />
     <Compile Include="Window\CreateNew.xaml.cs">
       <DependentUpon>CreateNew.xaml</DependentUpon>
     </Compile>
@@ -146,6 +148,7 @@
   <ItemGroup>
     <Content Include="References\Microsoft.Office.Interop.Excel.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
