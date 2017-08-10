@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TM"
         xmlns:tm="clr-namespace:TM"
         mc:Ignorable="d"
-        Title="TM" Height="1000" Width="1400" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" WindowState="Normal" Icon="Images/Icons/icon.png">
+        Title="TM" Height="1000" Width="1400" Loaded="Window_Loaded" Closed="Window_Closed" WindowStartupLocation="CenterScreen" WindowState="Normal" Icon="Images/Icons/icon.png">
     <Window.Resources>
         <ContextMenu x:Key="res_manager">
             <MenuItem Header="新建">

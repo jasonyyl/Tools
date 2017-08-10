@@ -22,6 +22,7 @@ namespace TM
     public partial class MainWindow : Window
     {
         #region Field
+        CExcelManager m_ExcelManager;
         CResourceManager m_ResManager;
         CFileManager m_FileManager;
         TreeViewItem m_CurSelectedResItem;
@@ -37,6 +38,10 @@ namespace TM
             m_ResManager = new CResourceManager();
             m_FileManager = new CFileManager();
             m_ResItems = new ObservableCollection<CResourceItem>();
+            m_ExcelManager = new CExcelManager();
+            m_ExcelManager.Open(@"E:\Work\Projects\Unity3d\SVN\MgaSrcNS\GameClient\TableOrg\CameraConfig.xlsm");
+            Microsoft.Office.Interop.Excel.Worksheet w = m_ExcelManager.GetSheet(2);
+            Log(w.Name);
             RefreshResource();
         }
 
@@ -291,8 +296,12 @@ namespace TM
 
 
 
+
         #endregion
 
-
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            m_ExcelManager.Close();
+        }
     }
 }
