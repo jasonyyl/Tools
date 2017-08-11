@@ -26,6 +26,10 @@ namespace TM
     }
     public static class CFileManager
     {
+        public static FileStream Open(string path, FileMode fileMode)
+        {
+            return File.Open(path, fileMode);
+        }
         public static EFileFlag CreateFile(string dir, string name, EFileType ft)
         {
             if (Directory.Exists(dir))
@@ -92,9 +96,13 @@ namespace TM
 
         }
 
-        public static bool Exist(string path)
+        public static bool FileExist(string path)
         {
             return File.Exists(path);
+        }
+        public static bool DirectorExist(string path)
+        {
+            return Directory.Exists(path);
         }
     }
 }

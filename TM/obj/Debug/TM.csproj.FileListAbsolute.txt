@@ -22,7 +22,6 @@ C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.exe
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.pdb
 C:\Users\Jason\Desktop\Tools\TM\bin\Debug\TM.exe
 C:\Users\Jason\Desktop\Tools\TM\bin\Debug\TM.pdb
-C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.csprojResolveAssemblyReference.cache
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\Window\CreateNew.g.cs
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\MainWindow.g.cs
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\Window\Setting.g.cs

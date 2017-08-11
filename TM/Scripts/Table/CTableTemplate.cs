@@ -18,6 +18,22 @@ namespace TM
     }
     public class CTableTemplate
     {
-        public int DataCount;
+        public enum EExportTarget
+        {
+            Both = 0,
+            Client,
+            Server,
+        }
+        public CCell RangeBound;
+        public List<string> DataType;
+        public List<EExportTarget> ExportTarget;
+
+        public CTableTemplate()
+        {
+            RangeBound = new CCell(1, 1);
+            DataType = new List<string>();
+            ExportTarget = new List<EExportTarget>();
+
+        }
     }
 }

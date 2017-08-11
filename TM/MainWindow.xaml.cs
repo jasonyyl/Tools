@@ -16,6 +16,7 @@ using System.IO;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading;
 
 namespace TM
 {
@@ -32,57 +33,28 @@ namespace TM
         {
             InitializeComponent();
         }
+
+        #region window
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             m_ResManager = new CResourceManager();
             m_TableManager = new CTableManager();
             m_ResItems = new ObservableCollection<CResourceItem>();
+            Clog.Instance.LogMsgEvent += Log;
             RefreshResource();
         }
 
-        #region base
-        private void Command_GenerateCode(object sender, ExecutedRoutedEventArgs e)
-        {
-            Log("导出代码成功");
-        }
-        private void Command_ExportTable(object sender, ExecutedRoutedEventArgs e)
-        {
-            Log("导出表格成功");
-        }
-        private void Command_ExportTableBinary(object sender, ExecutedRoutedEventArgs e)
-        {
-            Log("导出二进制表成功");
-        }
 
-        private void MenuItem_CodeGenerate_Click(object sender, RoutedEventArgs e)
+
+        private void Window_Closed(object sender, EventArgs e)
         {
-            Log("导出代码成功");
+            Clog.Instance.LogMsgEvent -= Log;
+            CExcelManager.Instance.Close();
         }
-        private void MenuItem_ExportTable_Click(object sender, RoutedEventArgs e)
-        {
-            if (m_CurSelectedResItem != null)
-            {
-                CResourceItem ri = m_CurSelectedResItem.DataContext as CResourceItem;
-                if (ri != null)
-                {
-                    if (Directory.Exists(ri.Path))
-                    {
-                        
-                    }
-                    else
-                    {
-                        if (File.Exists(ri.Path))
-                        {
-                            m_TableManager.ExportTable(ri.Path);
-                        }
-                    }                 
-                }
-            }
-        }
-        private void MenuItem_ExportTableBinary_Click(object sender, RoutedEventArgs e)
-        {
-            Log("导出二进制表成功");
-        }
+        #endregion
+
+        #region base
+
         private void MenuItem_Base_Setting(object sender, RoutedEventArgs e)
         {
             Setting s = new Setting();
@@ -92,6 +64,48 @@ namespace TM
         #endregion
 
         #region resource_manager
+
+        #region export
+        private void Command_GenerateCode(object sender, ExecutedRoutedEventArgs e)
+        {
+        }
+        private void Command_ExportTable(object sender, ExecutedRoutedEventArgs e)
+        {
+        }
+        private void Command_ExportTableBinary(object sender, ExecutedRoutedEventArgs e)
+        {
+        }
+
+        private void MenuItem_CodeGenerate_Click(object sender, RoutedEventArgs e)
+        {
+        }
+        private void MenuItem_ExportTable_Click(object sender, RoutedEventArgs e)
+        {
+            CResourceItem obj = m_CurSelectedResItem.DataContext as CResourceItem;
+            ThreadPool.QueueUserWorkItem((o) =>
+            {
+                CResourceItem ri = o as CResourceItem;
+                if (ri != null)
+                {
+                    if (Directory.Exists(ri.Path))
+                    {
+
+                    }
+                    else
+                    {
+                        if (File.Exists(ri.Path))
+                        {
+                            m_TableManager.ExportTable(ri.Path);
+                        }
+                    }
+                }
+            }, obj);
+        }
+        private void MenuItem_ExportTableBinary_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
 
         #region Open
         private void MenuItem_OpenFileExplore(object sender, RoutedEventArgs e)
@@ -138,7 +152,6 @@ namespace TM
                     if (!string.IsNullOrEmpty(c.InputName))
                     {
                         EFileFlag f = CFileManager.CreateDirectory(ri.Path, c.InputName);
-                        _LogFileFlag(f);
                         if (f == EFileFlag.Success)
                             RefreshResource();
                     }
@@ -161,7 +174,6 @@ namespace TM
                     if (!string.IsNullOrEmpty(c.InputName))
                     {
                         EFileFlag f = CFileManager.CreateFile(ri.Path, c.InputName, EFileType.Text);
-                        _LogFileFlag(f);
                         if (f == EFileFlag.Success)
                             RefreshResource();
                     }
@@ -180,7 +192,6 @@ namespace TM
                 if (ri != null)
                 {
                     EFileFlag f = CFileManager.Delete(ri.Path);
-                    _LogFileFlag(f);
                     if (f == EFileFlag.Success)
                         RefreshResource();
                 }
@@ -262,58 +273,46 @@ namespace TM
             return source;
         }
 
-        private void _LogFileFlag(EFileFlag f)
-        {
-            string str_f = string.Empty;
-            switch (f)
-            {
-                case EFileFlag.File_Exist:
-                    str_f = "文件已存在";
-                    break;
-                case EFileFlag.Path_NotExist:
-                    str_f = "路径不存在";
-                    break;
-                case EFileFlag.Directory_NotExist:
-                    str_f = "文件夹不存在";
-                    break;
-                case EFileFlag.Success:
-                    str_f = "操作成功";
-                    break;
-                default:
-                    break;
-            }
-            Log(str_f);
-        }
         #endregion
 
         #endregion
 
         #region common
-        public void Log(string log, bool isClear = false)
+
+        private void Log(string log, EMsgType msgType, bool isClearBefore)
         {
-            if (isClear)
-            {
-                sv_output.Content = string.Empty;
-            }
-            else
-            {
-                StringBuilder s = new StringBuilder();
-                s.Append("  ");
-                s.Append(log);
-                s.Append("\n");
-                sv_output.Content += s.ToString();
-            }
-            sv_output.ScrollToBottom();
+            Action<String> updateAction = new Action<string>((logMsg) =>
+                {
+                    string msgT = string.Empty;
+                    switch (msgType)
+                    {
+                        case EMsgType.Msg_Warning:
+                            msgT = "警告:";
+                            break;
+                        case EMsgType.Msg_Error:
+                            msgT = "错误:";
+                            break;
+                        default:
+                            msgT = "信息:";
+                            break;
+                    }
+                    if (isClearBefore)
+                    {
+                        sv_output.Content = string.Empty;
+                    }
+                    else
+                    {
+                        StringBuilder s = new StringBuilder();
+                        s.Append("  ");
+                        s.Append(msgT);
+                        s.Append(logMsg);
+                        s.Append("\n");
+                        sv_output.Content += s.ToString();
+                    }
+                    sv_output.ScrollToBottom();
+                });
+            this.Dispatcher.BeginInvoke(updateAction, log);
         }
-
-
-
-
         #endregion
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            CExcelManager.Instance.Close();
-        }
     }
 }

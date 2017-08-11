@@ -36,9 +36,18 @@ namespace TM
 
         public bool Open(string path)
         {
-            if (!CFileManager.Exist(path))
+         
+            if (!CFileManager.FileExist(path))
                 return false;
-            m_WorkBook = m_App.Workbooks.Open(path, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing);
+            try
+            {
+                m_WorkBook = m_App.Workbooks.Open(path, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing);
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return m_WorkBook != null;
         }
         public Worksheet GetSheet(string sheetName)
