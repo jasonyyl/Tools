@@ -76,35 +76,32 @@ namespace TM
                     Clog.Instance.LogError(sheet.Name + "导出失败");
                     continue;
                 }
-                using (FileStream fs = CFileManager.Open(Path.Combine(exportPath, sheet.Name + ".txt"), FileMode.Create))
+                string excelFilePath = Path.Combine(exportPath, sheet.Name + ".txt");
+                using (FileStream fs = File.Open(excelFilePath, FileMode.Create))
                 {
                     StreamWriter st = new StreamWriter(fs);
                     StringBuilder s = new StringBuilder();
                     CCell sheetBound = tableTemplate.RangeBound;
+                    Char end = (Char)(sheetBound.Column + 64);
+                    string strEnd = end.ToString() + sheetBound.Row;
+                    Range cells = sheet.Range["A1", strEnd].Cells;
+                    object[,] realCells = cells.Value;
                     for (int r = 1; r <= sheetBound.Row; r++)
                     {
-                        Range cellRowStart = sheet.UsedRange.Cells[r, 1];
-                        if (cellRowStart != null && cellRowStart.Text == "SkipRow")
+                        object o = realCells[r, 1];
+                        if (o == null)
+                            continue;
+                        string cellValue = o.ToString();
+                        if (cellValue == "SkipRow")
                             continue;
                         s.Clear();
                         for (int c = 1; c <= sheetBound.Column; c++)
                         {
-                            Range cell = sheet.UsedRange.Cells[r, c];
-                            #region for filter datatype process
-                            string dataType = string.Empty;
-                            if (c >= 2)
-                                dataType = tableTemplate.DataType[c - 2].ToLower();
-                            if (dataType == CDataType.DataType_STRING)
-                            {
-                                s.Append("\"");
-                                s.Append(cell.Text);
-                                s.Append("\"");
-                            }
-                            else
-                            {
-                                s.Append(cell.Text);
-                            }
-                            #endregion
+                            o = realCells[r, c];
+                            if (o == null)
+                                continue;
+                            cellValue = o.ToString();
+                            s.Append(cellValue);
                             s.Append(",");
                         }
                         st.WriteLine(s.ToString());
@@ -126,9 +123,10 @@ namespace TM
             m_KeysMatch.Clear();
             int vaildRowIndex = 0;
             int vaildColoumIndex = 0;
+            Range usedRange = sheet.UsedRange;
             foreach (var k in m_KeysInit)
             {
-                Range r = sheet.UsedRange.Find(k, Missing.Value, Missing.Value, Missing.Value, Missing.Value, XlSearchDirection.xlPrevious, true, true);
+                Range r = usedRange.Find(k, Missing.Value, Missing.Value, Missing.Value, Missing.Value, XlSearchDirection.xlPrevious, true, true);
                 if (r == null)
                 {
                     if (k == m_KeyExportType)
@@ -158,26 +156,41 @@ namespace TM
             {
                 int increaseColumns = 1;
                 int allColumns = sheet.UsedRange.Columns.Count;
+
+
                 while (increaseColumns < allColumns)
                 {
-                    Range rColumn = sheet.UsedRange[rowIndexOfColumn, increaseColumns];
-                    if (rColumn == null || string.IsNullOrEmpty(rColumn.Text))
+                    Range rColumn = usedRange[rowIndexOfColumn, increaseColumns];
+
+                    if (rColumn == null || rColumn.Value == null)
+                        break;
+                    string cellValue = rColumn.Value.ToString();
+                    if (string.IsNullOrEmpty(cellValue))
                         break;
                     if (rowIndexOfExportTarget > 0)
                     {
                         if (increaseColumns > 1)
                         {
-                            Range rExportTarget = sheet.UsedRange[rowIndexOfExportTarget, increaseColumns];
-                            int result = 0;
-                            int.TryParse(rExportTarget.Text, out result);
-                            template.ExportTarget.Add((CTableTemplate.EExportTarget)result);
+
+                            Range rExportTarget = usedRange[rowIndexOfExportTarget, increaseColumns];
+                            if (rExportTarget.Value != null)
+                            {
+                                int result = 0;
+                                cellValue = rExportTarget.Value.ToString();
+                                int.TryParse(cellValue, out result);
+                                template.ExportTarget.Add((CTableTemplate.EExportTarget)result);
+                            }
                         }
                     }
                     if (rowIndexOfDataType > 0)
                     {
-                        Range rDataType = sheet.UsedRange[rowIndexOfDataType, increaseColumns];
-                        if (increaseColumns > 1)
-                            template.DataType.Add(rDataType.Text);
+                        Range rDataType = usedRange[rowIndexOfDataType, increaseColumns];
+                        if (rDataType.Value != null)
+                        {
+                            cellValue = rDataType.Value.ToString();
+                            if (increaseColumns > 1)
+                                template.DataType.Add(cellValue);
+                        }
 
                     }
                     increaseColumns++;

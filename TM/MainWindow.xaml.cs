@@ -84,6 +84,7 @@ namespace TM
             CResourceItem obj = m_CurSelectedResItem.DataContext as CResourceItem;
             ThreadPool.QueueUserWorkItem((o) =>
             {
+                DateTime start = DateTime.Now;
                 CResourceItem ri = o as CResourceItem;
                 if (ri != null)
                 {
@@ -99,6 +100,7 @@ namespace TM
                         }
                     }
                 }
+                Clog.Instance.Log(DateTime.Now.Subtract(start).TotalSeconds + "s");
             }, obj);
         }
         private void MenuItem_ExportTableBinary_Click(object sender, RoutedEventArgs e)

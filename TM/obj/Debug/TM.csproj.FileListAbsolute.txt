@@ -16,7 +16,6 @@ C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Window\CreateNew.baml
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Window\Setting.baml
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\MainWindow.g.cs
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\MainWindow.baml
-C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.csprojResolveAssemblyReference.cache
 C:\Users\Jason\Desktop\Tools\TM\bin\Debug\TM.exe.config
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.exe
 C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM.pdb
