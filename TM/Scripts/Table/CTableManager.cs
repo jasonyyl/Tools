@@ -19,6 +19,8 @@ namespace TM
     }
     public class CTableManager
     {
+        #region Fields
+
         string m_KeyNumDataRows = "NumDataRows";
         string m_KeyColumn = "Column";
         string m_KeyDataType = "Datatype";
@@ -26,21 +28,33 @@ namespace TM
         string m_KeyDataBegin = "DataBegin";
         string m_KeyDataEnd = "DataEnd";
         string[] m_KeysInit;
+        bool m_bIsExporting = false;
         Dictionary<string, CCell> m_KeysMatch = new Dictionary<string, CCell>();
+
+        #endregion
+
         public CTableManager()
         {
             m_KeysInit = new string[] { m_KeyNumDataRows, m_KeyColumn, m_KeyDataType, m_KeyExportType, m_KeyDataBegin, m_KeyDataEnd };
         }
         public bool ExportTable(string path)
         {
+            if (m_bIsExporting)
+            {
+                Clog.Instance.LogError("请等待上一次导出完成");
+                return false;
+            }
+            m_bIsExporting = true;
             if (!CExcelManager.Instance.Open(path))
             {
+                m_bIsExporting = false;
                 Clog.Instance.LogError("Excel打开失败");
                 return false;
             }
             Sheets sheets = CExcelManager.Instance.GetSheets();
             if (sheets == null)
             {
+                m_bIsExporting = false;
                 Clog.Instance.LogError("Excel找不到有效页签供导出");
                 return false;
             }
@@ -98,6 +112,7 @@ namespace TM
                 }
                 Clog.Instance.Log(sheet.Name + "导出成功");
             }
+            m_bIsExporting = false;
             return true;
         }
 

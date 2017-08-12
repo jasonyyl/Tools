@@ -36,7 +36,7 @@ namespace TM
 
         public bool Open(string path)
         {
-         
+                    
             if (!CFileManager.FileExist(path))
                 return false;
             try
