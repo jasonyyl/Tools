@@ -67,6 +67,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Window\Ensure.xaml.cs">
+      <DependentUpon>Ensure.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripts\CBuildManager.cs" />
+    <Compile Include="Scripts\CCodeManager.cs" />
     <Compile Include="Scripts\CExcelManager.cs" />
     <Compile Include="Scripts\CFileManager.cs" />
     <Compile Include="Scripts\Log\Clog.cs" />
@@ -81,6 +86,10 @@
     <Compile Include="Window\Setting.xaml.cs">
       <DependentUpon>Setting.xaml</DependentUpon>
     </Compile>
+    <Page Include="Window\Ensure.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Window\CreateNew.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

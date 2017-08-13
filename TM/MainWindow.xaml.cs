@@ -23,6 +23,8 @@ namespace TM
     public partial class MainWindow : Window
     {
         #region Field
+        CCodeManager m_CodeManager;
+        CBuildManager m_BuildManager;
         CTableManager m_TableManager;
         CResourceManager m_ResManager;
         TreeViewItem m_CurSelectedResItem;
@@ -37,6 +39,8 @@ namespace TM
         #region window
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            m_CodeManager = new CCodeManager();
+            m_BuildManager = new CBuildManager();
             m_ResManager = new CResourceManager();
             m_TableManager = new CTableManager();
             m_ResItems = new ObservableCollection<CResourceItem>();
@@ -78,6 +82,26 @@ namespace TM
 
         private void MenuItem_CodeGenerate_Click(object sender, RoutedEventArgs e)
         {
+            CResourceItem obj = m_CurSelectedResItem.DataContext as CResourceItem;
+            CResourceItem ri = obj as CResourceItem;
+            if (ri != null)
+            {              
+                if (File.Exists(ri.Path))
+                {
+                    Ensure ensure = new Ensure();
+                    ensure.Init("全部覆盖原有文件吗?");
+                    ensure.ShowDialog();
+                }
+                else
+                {
+                    ThreadPool.QueueUserWorkItem((o) =>
+                    {
+
+                    }, ri);
+                }
+
+            }
+
         }
         private void MenuItem_ExportTable_Click(object sender, RoutedEventArgs e)
         {
@@ -106,6 +130,17 @@ namespace TM
         }
         private void MenuItem_ExportTableBinary_Click(object sender, RoutedEventArgs e)
         {
+            ThreadPool.QueueUserWorkItem((o) =>
+            {
+                string s = @"Build\SHLib\SHLib\SHLib.csproj";
+                string t = CCommon.GetValue(CCommon.key_code);
+                string l = @"Build\Link\ToolLinkCode.exe";
+                string b = @"Build\Build\AutoBuild.bat";
+                m_BuildManager.AutoLink(s, t, l);
+                int buildBack = m_BuildManager.AutoBuild(b);
+                if (buildBack > 0)
+                    Clog.Instance.LogError("编译失败 错误代码:" + buildBack);
+            });
 
         }
         #endregion
