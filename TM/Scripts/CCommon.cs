@@ -18,6 +18,7 @@ namespace TM
         public static string key_fileCode = "ftCode";
         public static string StrFolderIconPath = "Images/Icons/folder.png";
         public static string StrExcelIconPath = "Images/Icons/excel.png";
+        public static string StrSkipRows = "SkipRow";
 
         public static string GetValue(string key)
         {

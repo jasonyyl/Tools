@@ -104,5 +104,10 @@ namespace TM
         {
             return Directory.Exists(path);
         }
+
+        public static string[] GetFiles(string dir,string searchPattern,SearchOption s)
+        {
+            return Directory.GetFiles(dir, searchPattern, s);
+        }
     }
 }

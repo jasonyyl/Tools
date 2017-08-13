@@ -90,7 +90,7 @@ namespace TM
                 {
                     if (Directory.Exists(ri.Path))
                     {
-
+                        m_TableManager.ExportTables(ri.Path);
                     }
                     else
                     {
@@ -100,7 +100,8 @@ namespace TM
                         }
                     }
                 }
-                Clog.Instance.Log(DateTime.Now.Subtract(start).TotalSeconds + "s");
+                string time = "用时" + DateTime.Now.Subtract(start).TotalSeconds + "秒";
+                Clog.Instance.Log(time);
             }, obj);
         }
         private void MenuItem_ExportTableBinary_Click(object sender, RoutedEventArgs e)
