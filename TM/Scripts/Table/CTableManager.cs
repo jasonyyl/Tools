@@ -70,8 +70,8 @@ namespace TM
                 StreamWriter st = new StreamWriter(fs);
                 StringBuilder s = new StringBuilder();
                 CCell sheetBound = tableTemplate.RangeBound;
-                Char end = (Char)(sheetBound.Column + 64);
-                string strEnd = end.ToString() + sheetBound.Row;
+
+                string strEnd = _GetColumnChar(sheetBound.Column) + sheetBound.Row;
                 Range cells = sheet.Range["A1", strEnd].Cells;
                 object[,] realCells = cells.Value;
                 for (int r = 1; r <= sheetBound.Row; r++)
@@ -113,6 +113,28 @@ namespace TM
                     continue;
                 ExportTable(f);
             }
+        }
+
+        string _GetColumnChar(int columnIndex)
+        {
+            int first = columnIndex / 26;
+            int second = columnIndex % 26;         
+            if (second==0)
+            {
+                first -= 1;
+                second = 26;
+            }
+            Char firstChar = (Char)(first + 64);
+            Char secondChar = (Char)(second + 64);
+            if (first > 0)
+            {
+                return firstChar.ToString() + secondChar.ToString();
+            }
+            else
+            {
+                return secondChar.ToString();
+            }
+
         }
     }
 }
