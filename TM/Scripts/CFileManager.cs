@@ -95,7 +95,6 @@ namespace TM
             }
 
         }
-
         public static bool FileExist(string path)
         {
             return File.Exists(path);
@@ -104,10 +103,13 @@ namespace TM
         {
             return Directory.Exists(path);
         }
-
         public static string[] GetFiles(string dir,string searchPattern,SearchOption s)
         {
             return Directory.GetFiles(dir, searchPattern, s);
+        }
+        public static string ReadAllText(string path)
+        {
+            return File.ReadAllText(path);
         }
     }
 }

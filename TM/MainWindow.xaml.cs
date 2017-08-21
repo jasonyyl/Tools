@@ -86,19 +86,23 @@ namespace TM
             CResourceItem ri = obj as CResourceItem;
             if (ri != null)
             {              
-                if (File.Exists(ri.Path))
-                {
-                    Ensure ensure = new Ensure();
-                    ensure.Init("全部覆盖原有文件吗?");
-                    ensure.ShowDialog();
-                }
-                else
-                {
-                    ThreadPool.QueueUserWorkItem((o) =>
-                    {
+                //if (File.Exists(ri.Path))
+                //{
+                //    Ensure ensure = new Ensure();
+                //    ensure.Init("全部覆盖原有文件吗?");
+                //    ensure.ShowDialog();
+                //}
+                //else
+                //{
+                //    ThreadPool.QueueUserWorkItem((o) =>
+                //    {
 
-                    }, ri);
-                }
+                //    }, ri);
+                //}
+                ThreadPool.QueueUserWorkItem((o) =>
+                {
+                    m_CodeManager.CreateCode(ri.Path);
+                }, ri);
 
             }
 
@@ -133,7 +137,7 @@ namespace TM
             ThreadPool.QueueUserWorkItem((o) =>
             {
                 string s = @"Build\SHLib\SHLib\SHLib.csproj";
-                string t = CCommon.GetValue(CCommon.key_code);
+                string t = CCommon.GetValue(CCommon.key_codeEP);
                 string l = @"Build\Link\ToolLinkCode.exe";
                 string b = @"Build\Build\AutoBuild.bat";
                 m_BuildManager.AutoLink(s, t, l);
@@ -244,7 +248,7 @@ namespace TM
         }
         public void RefreshResource()
         {
-            string v = CCommon.GetValue(CCommon.key_table);
+            string v = CCommon.GetValue(CCommon.key_tableP);
             if (Directory.Exists(v))
             {
                 #region 1.file ext

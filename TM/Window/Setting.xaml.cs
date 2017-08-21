@@ -26,8 +26,8 @@ namespace TM
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            tb_code_path.Text = CCommon.GetValue(CCommon.key_code);
-            tb_table_path.Text = CCommon.GetValue(CCommon.key_table);
+            tb_code_path.Text = CCommon.GetValue(CCommon.key_codeEP);
+            tb_table_path.Text = CCommon.GetValue(CCommon.key_tableP);
             tb_table_exopt_path.Text = CCommon.GetValue(CCommon.key_tableEP);
             tb_table_exopt_binary_path.Text = CCommon.GetValue(CCommon.key_tableEBP);
             cb_excel.IsChecked = CCommon.GetValue(CCommon.key_fileExcel) == "1";
@@ -43,7 +43,7 @@ namespace TM
             {
                 string path = folderBrowserDialog.SelectedPath;
                 tb_code_path.Text = path;
-                CCommon.SetValue(CCommon.key_code, path);
+                CCommon.SetValue(CCommon.key_codeEP, path);
             }
         }
         private void bt_table_exopt_binary_setting_Click(object sender, RoutedEventArgs e)
@@ -78,7 +78,7 @@ namespace TM
             {
                 string path = folderBrowserDialog.SelectedPath;
                 tb_table_path.Text = path;
-                CCommon.SetValue(CCommon.key_table, path);
+                CCommon.SetValue(CCommon.key_tableP, path);
 
             }
         }

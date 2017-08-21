@@ -9,8 +9,8 @@ namespace TM
 {
     public static class CCommon
     {
-        public static string key_code = "code";
-        public static string key_table = "table";
+        public static string key_tableP = "tableExcelPath";
+        public static string key_codeEP = "codeExportPath";
         public static string key_tableEP = "tableExportPath";
         public static string key_tableEBP = "tableExportBinaryPath";
         public static string key_fileExcel = "ftExcel";

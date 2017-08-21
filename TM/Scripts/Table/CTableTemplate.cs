@@ -37,6 +37,7 @@ namespace TM
         string[] m_Keys;
 
         public CCell RangeBound;
+        public List<string> DataName;
         public List<string> DataType;
         public List<EExportTarget> ExportTarget;
         public Dictionary<string, CCell> KeysInit;
@@ -45,6 +46,7 @@ namespace TM
         public CTableTemplate(Worksheet sheet)
         {
             RangeBound = new CCell(1, 1);
+            DataName = new List<string>();
             DataType = new List<string>();
             ExportTarget = new List<EExportTarget>();
             KeysInit = new Dictionary<string, CCell>();
@@ -123,13 +125,21 @@ namespace TM
                     //2.data type
                     if (rowIndexOfDataType > 0)
                     {
+                        object rDataName = usedRange[rowIndexOfColumn, increaseColumns];
                         object rDataType = usedRange[rowIndexOfDataType, increaseColumns];
+                        if (rDataName != null)
+                        {
+                            cellValue = rDataName.ToString();
+                            if (increaseColumns > 1)
+                                DataName.Add(cellValue);
+                        }
                         if (rDataType != null)
                         {
                             cellValue = rDataType.ToString();
                             if (increaseColumns > 1)
                                 DataType.Add(cellValue);
                         }
+
 
                     }
                     increaseColumns++;
