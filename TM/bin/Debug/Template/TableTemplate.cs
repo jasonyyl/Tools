@@ -16,7 +16,7 @@ namespace Mga.SHLib
         #tableinforow_fields#
         public C#tablename#TableInfoRow()
         {
-           #tableinforow_init#
+            #tableinforow_init#
         }
     }
 

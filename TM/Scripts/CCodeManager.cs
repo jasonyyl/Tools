@@ -50,6 +50,24 @@ namespace TM
                     Clog.Instance.LogError(sheet.Name + "生成失败");
                     continue;
                 }
+                //1.write table
+                string tableScript = CFileManager.ReadAllText("Template/TableTemplate.cs");
+                tableScript = tableScript.Replace("#author#", "TM");
+                tableScript = tableScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
+                tableScript = tableScript.Replace("#tablename#", sheet.Name);
+                tableScript = tableScript.Replace("#tableinforow_fields#", GetTableRowInfoFields(tableTemplate.DataName, tableTemplate.DataType));
+                tableScript = tableScript.Replace("#tableinforow_init#", GetTableRowInfoInit(tableTemplate.DataName, tableTemplate.DataType));
+                string fileName = "C" + sheet.Name + "Table.cs";
+                string excelFilePath = Path.Combine(exportPath, fileName);
+                FileStream fs = CFileManager.Open(excelFilePath, FileMode.Create);
+                StreamWriter st = new StreamWriter(fs);
+                st.Write(tableScript);
+                st.Close();
+                fs.Close();
+                st.Dispose();
+                fs.Dispose();
+
+                //2.write tableinfo
                 string tableInfoScript = CFileManager.ReadAllText("Template/TableInfoTemplate.cs");
                 tableInfoScript = tableInfoScript.Replace("#author#", "TM");
                 tableInfoScript = tableInfoScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
@@ -60,11 +78,13 @@ namespace TM
                 tableInfoScript = tableInfoScript.Replace("#tableinfo_unserialize#", GetUnSerialize(tableTemplate.DataName));
                 tableInfoScript = tableInfoScript.Replace("#tableinfo_assign#", GetAssign(tableTemplate.DataName));
 
-                string fileName = "C" + sheet.Name + "TableInfo.cs";
-                string excelFilePath = Path.Combine(exportPath, fileName);
-                FileStream fs = CFileManager.Open(excelFilePath, FileMode.Create);
-                StreamWriter st = new StreamWriter(fs);
+                fileName = "C" + sheet.Name + "TableInfo.cs";
+                excelFilePath = Path.Combine(exportPath, fileName);
+                fs = CFileManager.Open(excelFilePath, FileMode.Create);
+                st = new StreamWriter(fs);
                 st.Write(tableInfoScript);
+
+
                 st.Close();
                 fs.Close();
                 st.Dispose();
@@ -74,6 +94,56 @@ namespace TM
             m_bIsGenerate = false;
             return true;
         }
+
+        #region table
+
+        public string GetTableRowInfoInit(List<string> dataName, List<string> dataType)
+        {
+            int len = Math.Min(dataName.Count, dataType.Count);
+            StringBuilder s = new StringBuilder();
+            for (int i = 0; i < len; i++)
+            {
+                string equalsValue = string.Empty;
+                switch (CDataType.ChangeToDataType(dataType[i]).ToLower())
+                {
+                    case CDataType.DataType_INT: equalsValue = "0"; break;
+                    case CDataType.DataType_FLOAT: equalsValue = "0"; break;
+                    case CDataType.DataType_STRING: equalsValue = "string.Empty"; break;
+                    case CDataType.DataType_BOOL: equalsValue = "false"; break;
+                    case CDataType.DataType_VECTOR2: equalsValue = "new Vector2(0,0)"; break;
+                    case CDataType.DataType_VECTOR3: equalsValue = "new Vector3(0,0,0)"; break;
+                    default:
+                        equalsValue = string.Empty;
+                        break;
+                }
+                s.Append("m_" + dataName[i] + " = " + equalsValue + ";");
+                if (i == len - 1)
+                    continue;
+                s.Append("\n");
+                s.Append("            ");
+            }
+            return s.ToString();
+
+        }
+
+        public string GetTableRowInfoFields(List<string> dataName, List<string> dataType)
+        {
+            int len = Math.Min(dataName.Count, dataType.Count);
+            StringBuilder s = new StringBuilder();
+            for (int i = 0; i < len; i++)
+            {
+                s.Append(CDataType.ChangeToDataType(dataType[i]) + " m_" + dataName[i] + ";");
+                if (i == len - 1)
+                    continue;
+                s.Append("\n");
+                s.Append("        ");
+            }
+            return s.ToString();
+
+        }
+        #endregion
+
+        #region table info
 
         public string GetFields(List<string> dataName, List<string> dataType)
         {
@@ -145,6 +215,8 @@ namespace TM
             }
             return s.ToString();
         }
+        #endregion
+
 
     }
 }
