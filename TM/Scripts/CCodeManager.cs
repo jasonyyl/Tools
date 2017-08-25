@@ -116,7 +116,7 @@ namespace TM
                         equalsValue = string.Empty;
                         break;
                 }
-                s.Append("m_" + dataName[i] + " = " + equalsValue + ";");
+                s.Append(dataName[i] + " = " + equalsValue + ";");
                 if (i == len - 1)
                     continue;
                 s.Append("\n");
@@ -132,7 +132,7 @@ namespace TM
             StringBuilder s = new StringBuilder();
             for (int i = 0; i < len; i++)
             {
-                s.Append(CDataType.ChangeToDataType(dataType[i]) + " m_" + dataName[i] + ";");
+                s.Append("public " + CDataType.ChangeToDataType(dataType[i]) + " " + dataName[i] + ";");
                 if (i == len - 1)
                     continue;
                 s.Append("\n");
@@ -151,7 +151,7 @@ namespace TM
             StringBuilder s = new StringBuilder();
             for (int i = 0; i < len; i++)
             {
-                s.Append(dataType[i] + " m_" + dataName[i] + ";");
+                s.Append(CDataType.ChangeToDataType(dataType[i]) + " m_" + dataName[i] + ";");
                 if (i == len - 1)
                     continue;
                 s.Append("\n");
@@ -165,7 +165,7 @@ namespace TM
             StringBuilder s = new StringBuilder();
             for (int i = 0; i < len; i++)
             {
-                s.Append("public " + dataType[i] + " " + dataName[i] + " { get { return m_" + dataName[i] + "; } private set { m_" + dataName[i] + " = value; }}");
+                s.Append("public " + CDataType.ChangeToDataType(dataType[i]) + " " + dataName[i] + " { get { return m_" + dataName[i] + "; } private set { m_" + dataName[i] + " = value; }}");
                 if (i == len - 1)
                     continue;
                 s.Append("\n");
@@ -216,7 +216,5 @@ namespace TM
             return s.ToString();
         }
         #endregion
-
-
     }
 }

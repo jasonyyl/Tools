@@ -38,4 +38,3 @@ C:\Users\Jason\Desktop\Tools\TM\obj\Debug\TM_Content.g.cs
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM_Content.g.cs
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Window\Ensure.g.cs
 C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\Window\Ensure.baml
-C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\TM.csprojResolveAssemblyReference.cache
