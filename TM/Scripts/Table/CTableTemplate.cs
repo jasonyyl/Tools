@@ -18,135 +18,123 @@ namespace TM
             Column = column;
         }
     }
+    public class CRow
+    {
+        public int RowIndex;
+        public string RowKey;
+        public List<string> RowContent;
+        public CRow()
+        {
+            RowIndex = 0;
+            RowKey = string.Empty;
+            RowContent = new List<string>();
+        }
+    }
     public class CTableTemplate
     {
-        public enum EExportTarget
-        {
-            Both = 0,
-            Client,
-            Server,
-        }
-
         #region Fields
-        string m_KeyNumDataRows = "NumDataRows:";
-        string m_KeyColumn = "Column:";
-        string m_KeyDataType = "Datatype:";
-        string m_KeyExportType = "ExportTarget:";
-        string m_KeyDataBegin = "DataBegin:";
-        string m_KeyDataEnd = "DataEnd:";
-        string[] m_Keys;
+        public static string KeyBinary = "Binary:";
+        public static string KeyColumn = "Column:";
+        public static string KeyCheckRule = "CheckRule:";
+        public static string KeyDefault = "Default:";
+        public static string KeyDataType = "Datatype:";
+        public static string KeyDataTypeDefine = "DataTypeDefine:";
+        public static string KeyDataBegin = "DataBegin:";
+        public static string KeyDataEnd = "DataEnd:";
+        public static string KeyExportType = "ExportTarget:";
+        public static string KeyNumDataRows = "NumDataRows:";
+        public static string KeyNotNull = "NotNull:";
+        public static string KeySchemaVersion = "SchemaVersion:";
+        public static string KeyUnique = "Unique:";
+        public static string KeyUnsigned = "Unsigned:";
+        public static string KeyZeroFill = "ZeroFill:";
+
 
         public CCell RangeBound;
-        public List<string> DataName;
-        public List<string> DataType;
-        public List<EExportTarget> ExportTarget;
-        public Dictionary<string, CCell> KeysInit;
+        public Dictionary<int, CRow> DataContent;
+
+        object[,] m_UsedDataContent;
+        List<List<string>> m_DataContent;
         #endregion
 
+        #region Public
         public CTableTemplate(Worksheet sheet)
         {
             RangeBound = new CCell(1, 1);
-            DataName = new List<string>();
-            DataType = new List<string>();
-            ExportTarget = new List<EExportTarget>();
-            KeysInit = new Dictionary<string, CCell>();
-            m_Keys = new string[] { m_KeyNumDataRows, m_KeyColumn, m_KeyDataType, m_KeyExportType, m_KeyDataBegin, m_KeyDataEnd };
-            Init(sheet);
+            DataContent = new Dictionary<int, CRow>();
+            m_UsedDataContent = sheet.UsedRange.Value;
+            _Init();
         }
-
-        void Init(Worksheet sheet)
+        public List<string> GetRowContent(string key)
         {
-            #region 1.find key
-            object[,] usedRange = sheet.UsedRange.Value;
-            int rLength = usedRange.GetLength(0);
-            int cLength = usedRange.GetLength(1);
+            foreach (var row in DataContent)
+            {
+                if (row.Value.RowKey == key)
+                {
+                    List<string> d = row.Value.RowContent;
+                    return d.GetRange(1, RangeBound.Column - 1);
+                }
+            }
+            return null;
+        }
+        public List<List<string>> GetDataConetent(string key)
+        {
+            if (m_DataContent == null)
+                m_DataContent = new List<List<string>>();
+            m_DataContent.Clear();
+            int len = RangeBound.Row;
+            bool isStart = false;
+            for (int i = 0; i < len; i++)
+            {
+                if (DataContent[i].RowKey == KeyDataBegin)
+                    isStart = true;
+                if (isStart)
+                {
+                    List<string> d = DataContent[i].RowContent;
+                    m_DataContent.Add(d.GetRange(1, RangeBound.Column - 1));
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region Private
+        void _Init()
+        {
+            int rLength = m_UsedDataContent.GetLength(0);
+            int cLength = m_UsedDataContent.GetLength(1);
             for (int i = 1; i <= rLength; i++)
             {
+                object r = m_UsedDataContent[i, 1];
+                CRow row = new CRow();
+                row.RowIndex = i;
+                if (r != null)
+                    row.RowKey = r.ToString();
+                DataContent.Add(i, row);
                 for (int j = 1; j <= cLength; j++)
                 {
-                    object o = usedRange[i, j];
-                    if (o != null)
+                    object c = m_UsedDataContent[i, j];
+                    if (c != null)
                     {
-                        foreach (var initKey in m_Keys)
+                        row.RowContent.Add(c.ToString());
+                        if (r != null && KeyColumn == r.ToString())
                         {
-                            if (initKey == o.ToString())
-                            {
-                                if (!KeysInit.ContainsKey(initKey))
-                                    KeysInit.Add(initKey, new CCell(1, 1));
-                                KeysInit[initKey].Row = i;
-                                KeysInit[initKey].Column = j;
-                            }
+                            RangeBound.Column = j;
                         }
+                        if (KeyDataEnd == c.ToString())
+                        {
+                            RangeBound.Row = i;
+                        }
+                    }
+                    else
+                    {
+                        row.RowContent.Add(string.Empty);
                     }
 
                 }
             }
-            #endregion
-
-            #region 2.init key
-            int rowIndexOfColumn = 0;
-            int rowIndexOfExportTarget = 0;
-            int rowIndexOfDataType = 0;
-            if (KeysInit.ContainsKey(m_KeyColumn))
-                rowIndexOfColumn = KeysInit[m_KeyColumn].Row;
-            if (KeysInit.ContainsKey(m_KeyExportType))
-                rowIndexOfExportTarget = KeysInit[m_KeyExportType].Row;
-            if (KeysInit.ContainsKey(m_KeyDataType))
-                rowIndexOfDataType = KeysInit[m_KeyDataType].Row;
-            if (KeysInit.ContainsKey(m_KeyDataEnd))
-                RangeBound.Row = KeysInit[m_KeyDataEnd].Row;
-            if (rowIndexOfColumn > 0)
-            {
-                int increaseColumns = 1;
-                int allColumns = sheet.UsedRange.Columns.Count;
-                while (increaseColumns < allColumns)
-                {
-                    object rColumn = usedRange[rowIndexOfColumn, increaseColumns];
-                    if (rColumn == null)
-                        break;
-                    string cellValue = rColumn.ToString();
-                    if (string.IsNullOrEmpty(cellValue))
-                        break;
-                    //1.export type
-                    if (rowIndexOfExportTarget > 0)
-                    {
-                        if (increaseColumns > 1)
-                        {
-                            object rExportTarget = usedRange[rowIndexOfExportTarget, increaseColumns];
-                            if (rExportTarget != null)
-                            {
-                                int result = 0;
-                                cellValue = rExportTarget.ToString();
-                                int.TryParse(cellValue, out result);
-                                ExportTarget.Add((CTableTemplate.EExportTarget)result);
-                            }
-                        }
-                    }
-                    //2.data type
-                    if (rowIndexOfDataType > 0)
-                    {
-                        object rDataName = usedRange[rowIndexOfColumn, increaseColumns];
-                        object rDataType = usedRange[rowIndexOfDataType, increaseColumns];
-                        if (rDataName != null)
-                        {
-                            cellValue = rDataName.ToString();
-                            if (increaseColumns > 1)
-                                DataName.Add(cellValue);
-                        }
-                        if (rDataType != null)
-                        {
-                            cellValue = rDataType.ToString();
-                            if (increaseColumns > 1)
-                                DataType.Add(cellValue);
-                        }
-
-
-                    }
-                    increaseColumns++;
-                }
-                RangeBound.Column = increaseColumns - 1;
-            }
-            #endregion
+            Clog.Instance.LogError("行:" + RangeBound.Row + "列:" + RangeBound.Column);
         }
+        #endregion
     }
 }

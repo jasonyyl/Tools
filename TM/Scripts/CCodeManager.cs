@@ -51,12 +51,19 @@ namespace TM
                     continue;
                 }
                 //1.write table
+                List<string> dataName = tableTemplate.GetRowContent(CTableTemplate.KeyColumn);
+                List<string> dataType = tableTemplate.GetRowContent(CTableTemplate.KeyDataType);
+                if (dataName == null || dataType == null)
+                {
+                    Clog.Instance.LogError("列名和列类型获取失败");
+                    return false;
+                }
                 string tableScript = CFileManager.ReadAllText("Template/TableTemplate.cs");
                 tableScript = tableScript.Replace("#author#", "TM");
                 tableScript = tableScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
                 tableScript = tableScript.Replace("#tablename#", sheet.Name);
-                tableScript = tableScript.Replace("#tableinforow_fields#", GetTableRowInfoFields(tableTemplate.DataName, tableTemplate.DataType));
-                tableScript = tableScript.Replace("#tableinforow_init#", GetTableRowInfoInit(tableTemplate.DataName, tableTemplate.DataType));
+                tableScript = tableScript.Replace("#tableinforow_fields#", GetTableRowInfoFields(dataName, dataType));
+                tableScript = tableScript.Replace("#tableinforow_init#", GetTableRowInfoInit(dataName, dataType));
                 string fileName = "C" + sheet.Name + "Table.cs";
                 string excelFilePath = Path.Combine(exportPath, fileName);
                 FileStream fs = CFileManager.Open(excelFilePath, FileMode.Create);
@@ -72,11 +79,11 @@ namespace TM
                 tableInfoScript = tableInfoScript.Replace("#author#", "TM");
                 tableInfoScript = tableInfoScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
                 tableInfoScript = tableInfoScript.Replace("#tablename#", sheet.Name);
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_fields#", GetFields(tableTemplate.DataName, tableTemplate.DataType));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_properties#", GetPropertiess(tableTemplate.DataName, tableTemplate.DataType));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_serialize#", GetSerialize(tableTemplate.DataName));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_unserialize#", GetUnSerialize(tableTemplate.DataName));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_assign#", GetAssign(tableTemplate.DataName));
+                tableInfoScript = tableInfoScript.Replace("#tableinfo_fields#", GetFields(dataName, dataType));
+                tableInfoScript = tableInfoScript.Replace("#tableinfo_properties#", GetPropertiess(dataName, dataType));
+                tableInfoScript = tableInfoScript.Replace("#tableinfo_serialize#", GetSerialize(dataName));
+                tableInfoScript = tableInfoScript.Replace("#tableinfo_unserialize#", GetUnSerialize(dataName));
+                tableInfoScript = tableInfoScript.Replace("#tableinfo_assign#", GetAssign(dataName));
 
                 fileName = "C" + sheet.Name + "TableInfo.cs";
                 excelFilePath = Path.Combine(exportPath, fileName);
