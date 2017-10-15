@@ -320,7 +320,17 @@ namespace TM
         #endregion
 
         #region common
+        private void Msg(Action<bool> result)
+        {
+            Action<String> updateAction = new Action<string>((msg) =>
+            {
+                Ensure e = new Ensure();
+                e.Init(msg);
+                
 
+            });
+
+        }
         private void Log(string log, EMsgType msgType, bool isClearBefore)
         {
             Action<String> updateAction = new Action<string>((logMsg) =>

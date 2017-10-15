@@ -20,10 +20,15 @@ namespace Mga.SHLib
 
         #region Properties
 
-        public override int Version { get { return TableInfoVer; } }
         #tableinfo_properties#
-        
-        #endregion
+
+        #endregion Properties
+
+        #region Init
+
+        #tableinfo_init#
+
+        #endregion Init
 
         #region Serializable
 
@@ -42,6 +47,7 @@ namespace Mga.SHLib
                 return false;
             }
             #tableinfo_unserialize#
+            Initialize();
             return true;
         }
         #endregion
@@ -52,6 +58,7 @@ namespace Mga.SHLib
         internal bool AssignByTableData(C#tablename#TableInfoRow row)
         {
             #tableinfo_assign#
+            Initialize();
             return true;
         }
 

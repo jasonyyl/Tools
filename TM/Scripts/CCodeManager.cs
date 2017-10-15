@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace TM
 {
@@ -50,7 +52,11 @@ namespace TM
                     Clog.Instance.LogError(sheet.Name + "生成失败");
                     continue;
                 }
-                //1.write table
+                #region 1.write table
+
+                FileStream fs;
+                StreamWriter st;
+                bool isOverride = true;
                 List<string> dataName = tableTemplate.GetRowContent(CTableTemplate.KeyColumn);
                 List<string> dataType = tableTemplate.GetRowContent(CTableTemplate.KeyDataType);
                 if (dataName == null || dataType == null)
@@ -58,44 +64,92 @@ namespace TM
                     Clog.Instance.LogError("列名和列类型获取失败");
                     return false;
                 }
-                string tableScript = CFileManager.ReadAllText("Template/TableTemplate.cs");
-                tableScript = tableScript.Replace("#author#", "TM");
-                tableScript = tableScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
-                tableScript = tableScript.Replace("#tablename#", sheet.Name);
-                tableScript = tableScript.Replace("#tableinforow_fields#", GetTableRowInfoFields(dataName, dataType));
-                tableScript = tableScript.Replace("#tableinforow_init#", GetTableRowInfoInit(dataName, dataType));
                 string fileName = "C" + sheet.Name + "Table.cs";
                 string excelFilePath = Path.Combine(exportPath, fileName);
-                FileStream fs = CFileManager.Open(excelFilePath, FileMode.Create);
-                StreamWriter st = new StreamWriter(fs);
-                st.Write(tableScript);
-                st.Close();
-                fs.Close();
-                st.Dispose();
-                fs.Dispose();
+                if (File.Exists(excelFilePath))
+                {
+                    DialogResult r = MessageBox.Show("是否覆盖文件 " + fileName, "", MessageBoxButtons.YesNo);
+                    isOverride = r == DialogResult.Yes;
+                }
+                if (isOverride)
+                {
+                    string tableScript = CFileManager.ReadAllText("Template/TableTemplate.cs");
+                    tableScript = tableScript.Replace("#author#", "TM");
+                    tableScript = tableScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
+                    tableScript = tableScript.Replace("#tablename#", sheet.Name);
+                    tableScript = tableScript.Replace("#tableinforow_fields#", GetTableRowInfoFields(dataName, dataType));
+                    tableScript = tableScript.Replace("#tableinforow_init#", GetTableRowInfoInit(dataName, dataType));
 
-                //2.write tableinfo
-                string tableInfoScript = CFileManager.ReadAllText("Template/TableInfoTemplate.cs");
-                tableInfoScript = tableInfoScript.Replace("#author#", "TM");
-                tableInfoScript = tableInfoScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
-                tableInfoScript = tableInfoScript.Replace("#tablename#", sheet.Name);
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_fields#", GetFields(dataName, dataType));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_properties#", GetPropertiess(dataName, dataType));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_serialize#", GetSerialize(dataName));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_unserialize#", GetUnSerialize(dataName));
-                tableInfoScript = tableInfoScript.Replace("#tableinfo_assign#", GetAssign(dataName));
+                    fs = CFileManager.Open(excelFilePath, FileMode.Create);
+                    st = new StreamWriter(fs);
+                    st.Write(tableScript);
+                    st.Close();
+                    fs.Close();
+                    st.Dispose();
+                    fs.Dispose();
+                }
+                #endregion
 
+                #region 2.write tableinfo
+
+                isOverride = true;
                 fileName = "C" + sheet.Name + "TableInfo.cs";
                 excelFilePath = Path.Combine(exportPath, fileName);
-                fs = CFileManager.Open(excelFilePath, FileMode.Create);
-                st = new StreamWriter(fs);
-                st.Write(tableInfoScript);
+                string matchInit = string.Empty;
+                string matchPro = string.Empty;
+                if (File.Exists(excelFilePath))
+                {
+                    DialogResult r = MessageBox.Show("是否覆盖文件 " + fileName, "", MessageBoxButtons.YesNo);
+                    isOverride = r == DialogResult.Yes;
+                    string input = File.ReadAllText(excelFilePath);
 
+                    Match match = Regex.Match(input, @"#region Init([\s\S]*)#endregion Init");
+                    if (match.Groups.Count >= 2)
+                    {
+                        matchInit = match.Groups[1].ToString();
+                        matchInit = matchInit.Replace("\r\n\r\n", "");
+                        int idx = matchInit.IndexOf("public");
+                        matchInit = matchInit.Substring(idx);
+                    }
+                    match = Regex.Match(input, @"#region Properties([\s\S]*)#endregion Properties");
+                    if (match.Groups.Count >= 2)
+                    {
+                        matchPro = match.Groups[1].ToString();
+                        matchPro = matchPro.Replace("\r\n\r\n", "");
+                        int idx = matchPro.IndexOf("public");
+                        matchPro = matchPro.Substring(idx);
+                    }
+                }
+                if (isOverride)
+                {
+                    string tableInfoScript = CFileManager.ReadAllText("Template/TableInfoTemplate.cs");
+                    tableInfoScript = tableInfoScript.Replace("#author#", "TM");
+                    tableInfoScript = tableInfoScript.Replace("#datetime#", DateTime.Now.ToString("yyyy-MM-dd"));
+                    tableInfoScript = tableInfoScript.Replace("#tablename#", sheet.Name);
+                    tableInfoScript = tableInfoScript.Replace("#tableinfo_fields#", GetFields(dataName, dataType));
+                    tableInfoScript = tableInfoScript.Replace("#tableinfo_serialize#", GetSerialize(dataName));
+                    tableInfoScript = tableInfoScript.Replace("#tableinfo_unserialize#", GetUnSerialize(dataName));
+                    tableInfoScript = tableInfoScript.Replace("#tableinfo_assign#", GetAssign(dataName));
 
-                st.Close();
-                fs.Close();
-                st.Dispose();
-                fs.Dispose();
+                    if (string.IsNullOrEmpty(matchPro))
+                        tableInfoScript = tableInfoScript.Replace("#tableinfo_properties#", GetPropertiess(dataName, dataType));
+                    else
+                        tableInfoScript = tableInfoScript.Replace("#tableinfo_properties#", matchPro);
+
+                    if (string.IsNullOrEmpty(matchInit))
+                        tableInfoScript = tableInfoScript.Replace("#tableinfo_init#", GetInit());
+                    else
+                        tableInfoScript = tableInfoScript.Replace("#tableinfo_init#", matchInit);
+
+                    fs = CFileManager.Open(excelFilePath, FileMode.Create);
+                    st = new StreamWriter(fs);
+                    st.Write(tableInfoScript);
+                    st.Close();
+                    fs.Close();
+                    st.Dispose();
+                    fs.Dispose();
+                }
+                #endregion
                 Clog.Instance.Log(sheet.Name + "生成成功");
             }
             m_bIsGenerate = false;
@@ -170,6 +224,7 @@ namespace TM
         {
             int len = Math.Min(dataName.Count, dataType.Count);
             StringBuilder s = new StringBuilder();
+            s.Append("public override int Version { get { return TableInfoVer; } }");
             for (int i = 0; i < len; i++)
             {
                 s.Append("public " + CDataType.ChangeToDataType(dataType[i]) + " " + dataName[i] + " { get { return m_" + dataName[i] + "; } private set { m_" + dataName[i] + " = value; }}");
@@ -179,6 +234,15 @@ namespace TM
                 s.Append("        ");
             }
             return s.ToString();
+        }
+
+        public string GetInit()
+        {
+            StringBuilder b = new StringBuilder();
+            b.Append("public void Initilize()");
+            b.Append("\n        {");
+            b.Append("\n        }");
+            return b.ToString();
         }
         public string GetSerialize(List<string> dataName)
         {

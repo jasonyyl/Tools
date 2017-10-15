@@ -48,16 +48,6 @@
       <HintPath>References\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CFxsTable.cs" />
-    <Compile Include="CFxsTableInfo.cs" />
-    <Compile Include="CTableUtility.cs" />
-    <Compile Include="CUniqueString.cs" />
-    <Compile Include="ISerializable.cs" />
-    <Compile Include="ITable.cs" />
-    <Compile Include="StarStreamExt.cs" />
-    <Compile Include="TSingleton.cs" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -66,4 +56,18 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Compile Include="..\..\..\..\..\..\..\..\..\..\Users\yuling.yan.AOGOOD\Desktop\test\Code\CCameraConfigTable.cs">
+      <Link>Code\CCameraConfigTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\..\..\..\..\..\..\Users\yuling.yan.AOGOOD\Desktop\test\Code\CCameraConfigTableInfo.cs">
+      <Link>Code\CCameraConfigTableInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\..\..\..\..\..\..\Users\yuling.yan.AOGOOD\Desktop\test\Code\CColorsTable.cs">
+      <Link>Code\CColorsTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\..\..\..\..\..\..\Users\yuling.yan.AOGOOD\Desktop\test\Code\CColorsTableInfo.cs">
+      <Link>Code\CColorsTableInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
 </Project>
