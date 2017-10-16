@@ -36,12 +36,12 @@ namespace TM
 
         public bool Open(string path)
         {
-                    
-            if (!CFileManager.FileExist(path))
+            string fullPath = Path.GetFullPath(path);
+            if (!CFileManager.FileExist(fullPath))
                 return false;
             try
             {
-                m_WorkBook = m_App.Workbooks.Open(path, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing);
+                m_WorkBook = m_App.Workbooks.Open(fullPath, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing, m_Nothing);
 
             }
             catch (Exception)
@@ -87,7 +87,8 @@ namespace TM
         {
             try
             {
-                m_WorkBook.Save();
+                if (m_WorkBook != null)
+                    m_WorkBook.Save();
                 if (m_IsOpened)
                 {
                     m_WorkBook.Close(true);
@@ -97,10 +98,6 @@ namespace TM
             }
             catch (Exception)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("close failure");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.ReadKey();
             }
         }
     }

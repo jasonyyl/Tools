@@ -1,5 +1,0 @@
-C:\Works\VS2015\GitHub\Tools\TM\bin\Release\Build\SHLib\SHLib\bin\Debug\SHLib.dll
-C:\Works\VS2015\GitHub\Tools\TM\bin\Release\Build\SHLib\SHLib\bin\Debug\SHLib.pdb
-C:\Works\VS2015\GitHub\Tools\TM\bin\Release\Build\SHLib\SHLib\obj\Debug\SHLib.dll
-C:\Works\VS2015\GitHub\Tools\TM\bin\Release\Build\SHLib\SHLib\obj\Debug\SHLib.pdb
-C:\Works\VS2015\GitHub\Tools\TM\bin\Release\Build\SHLib\SHLib\obj\Debug\SHLib.csprojResolveAssemblyReference.cache

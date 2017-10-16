@@ -224,9 +224,11 @@ namespace TM
         {
             int len = Math.Min(dataName.Count, dataType.Count);
             StringBuilder s = new StringBuilder();
-            s.Append("public override int Version { get { return TableInfoVer; } }");
+            s.Append("public override int Version { get { return TableInfoVer; } }\n        ");
             for (int i = 0; i < len; i++)
             {
+                if (i == 0 && CDataType.ChangeToDataType(dataType[i]) == "int")
+                    s.Append("public int UniqueID { get { return " + dataName[i] + "; } set { " + dataName[i] + " = value; } }\n        ");
                 s.Append("public " + CDataType.ChangeToDataType(dataType[i]) + " " + dataName[i] + " { get { return m_" + dataName[i] + "; } private set { m_" + dataName[i] + " = value; }}");
                 if (i == len - 1)
                     continue;
@@ -239,7 +241,7 @@ namespace TM
         public string GetInit()
         {
             StringBuilder b = new StringBuilder();
-            b.Append("public void Initilize()");
+            b.Append("public void Initialize()");
             b.Append("\n        {");
             b.Append("\n        }");
             return b.ToString();

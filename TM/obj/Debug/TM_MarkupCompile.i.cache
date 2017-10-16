@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Works\VS2015\GitHub\Tools\TM\obj\Debug\
+E:\Work\Projects\VS2015\GitHub\Tools\TM\obj\Debug\
 TM
 none
 false
 DEBUG;TRACE
-C:\Works\VS2015\GitHub\Tools\TM\App.xaml
+E:\Work\Projects\VS2015\GitHub\Tools\TM\App.xaml
 4-761687411
 1-96237357
-251647102519
-16-1773335612
+25-2118976127
+161468316439
 Window\Ensure.xaml;Window\CreateNew.xaml;MainWindow.xaml;Window\Setting.xaml;
 
-True
+False
 
